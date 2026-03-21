@@ -1,26 +1,18 @@
 import dotenv from "dotenv";
-import express from "express";
-import cors from "cors";
+dotenv.config();
+
+import app from "./app.js";
 import connectDB from "./config/db.js";
 
-dotenv.config();
-connectDB();
+const PORT = process.env.PORT || 5000;
 
-const PORT = process.env.PORT
-const app = express();
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
+  });
+});
 
-app.use(cors({
-    origin: process.env.FRONT_END_URL,
-    credentials: true
-}));
-
-app.use(express.json());
-
-app.get('/', (req, res) => {
-    res.send("Api is up and running!");
-})
-
-
-app.listen(PORT, () => {
-    console.log(`Listening to ${PORT}`);
-})
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED REJECTION:", err.message);
+  process.exit(1);
+});
