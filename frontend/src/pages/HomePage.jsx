@@ -55,7 +55,7 @@ const HomePage = () => {
             <div>
               <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={0}
                 className="eyebrow flex items-center gap-3 mb-5">
-                <span className="gold-line" /> New Collection 2025
+                <span className="gold-line" /> New Collection 2026
               </motion.p>
 
               <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={1}
