@@ -27,49 +27,50 @@ const ShopPage = () => {
   const [maxPrice,   setMaxPrice]   = useState(50000);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // Prevents double-fetch on mount — we read URL params AND fetch in one effect
-  const initialised = useRef(false);
+  // Store the last seen search string so we can detect when the user
+  // navigates between /shop, /shop?sort=newest, /shop?featured=true etc.
+  const lastSearch = useRef(null);
 
+  // ── Effect: re-runs whenever URL search params OR user-driven filters change ─
   useEffect(() => {
-    let activeFilters = { ...filters };
+    const currentSearch = searchParams.toString();
 
-    if (!initialised.current) {
+    // If the URL changed (user clicked a navbar link), re-read params and reset filters
+    if (lastSearch.current !== currentSearch) {
+      lastSearch.current = currentSearch;
+
       const keyword    = searchParams.get('keyword')   || '';
       const category   = searchParams.get('category')  || '';
       const sort       = searchParams.get('sort')      || 'newest';
-      // /shop?featured=true comes from the "Featured" navbar link
       const isFeatured = searchParams.get('featured') === 'true' ? 'true' : '';
 
-      activeFilters = { ...filters, keyword, category, sort, isFeatured };
+      // Reset page and maxPrice when URL params change
+      setPage(1);
+      setMaxPrice(50000);
+
+      // Sync Redux filters and fetch immediately with URL-derived params
       dispatch(setFilters({ keyword, category, sort, isFeatured }));
-      initialised.current = true;
+
+      const params = { keyword, category, sort, isFeatured, page: 1, limit: 12 };
+      Object.keys(params).forEach((k) => {
+        if (params[k] === '' || params[k] === undefined) delete params[k];
+      });
+      dispatch(fetchProducts(params));
+      return; // don't double-fetch below
     }
 
-    const params = {
-      ...activeFilters,
-      page,
-      limit: 12,
-      maxPrice: maxPrice < 50000 ? maxPrice : '',
-    };
-    // Remove empty values so backend doesn't receive stray keys
+    // URL hasn't changed — user adjusted a sidebar filter, page, or price range
+    const params = { ...filters, page, limit: 12, maxPrice: maxPrice < 50000 ? maxPrice : '' };
     Object.keys(params).forEach((k) => {
       if (params[k] === '' || params[k] === undefined) delete params[k];
     });
-
     dispatch(fetchProducts(params));
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, page, maxPrice]);
+  }, [searchParams, filters, page, maxPrice]);
 
-  const set = (key, val) => {
-    dispatch(setFilters({ [key]: val }));
-    setPage(1);
-  };
-
-  const clear = () => {
-    dispatch(clearFilters());
-    setMaxPrice(50000);
-    setPage(1);
-  };
+  const set = (key, val) => { dispatch(setFilters({ [key]: val })); setPage(1); };
+  const clear = () => { dispatch(clearFilters()); setMaxPrice(50000); setPage(1); };
 
   const FilterContent = () => (
     <div className="space-y-7">
@@ -106,16 +107,16 @@ const ShopPage = () => {
     </div>
   );
 
+  const isFeaturedPage = filters.isFeatured === 'true';
+
   return (
     <div className="pt-24 pb-20 min-h-screen">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <p className="eyebrow mb-1">
-            {filters.isFeatured === 'true' ? 'Hand-picked' : 'Discover'}
-          </p>
+          <p className="eyebrow mb-1">{isFeaturedPage ? 'Hand-picked' : 'Discover'}</p>
           <h1 className="font-display text-4xl md:text-5xl text-cream mb-6">
-            {filters.isFeatured === 'true' ? 'Featured Products' : 'All Products'}
+            {isFeaturedPage ? 'Featured Products' : 'All Products'}
           </h1>
 
           <div className="flex flex-wrap gap-3 items-center">
@@ -137,7 +138,7 @@ const ShopPage = () => {
           </div>
 
           {/* Active filter chips */}
-          {(filters.keyword || filters.category || filters.isFeatured) && (
+          {(filters.keyword || filters.category || isFeaturedPage) && (
             <div className="flex gap-2 mt-3 flex-wrap">
               {filters.keyword && (
                 <span className="flex items-center gap-1.5 px-3 py-1 bg-gold-500/10 border border-gold-500/25 text-gold-500 text-[0.72rem] rounded-full">
@@ -149,7 +150,7 @@ const ShopPage = () => {
                   {filters.category} <button onClick={() => set('category', '')}><X size={10} /></button>
                 </span>
               )}
-              {filters.isFeatured === 'true' && (
+              {isFeaturedPage && (
                 <span className="flex items-center gap-1.5 px-3 py-1 bg-gold-500/10 border border-gold-500/25 text-gold-500 text-[0.72rem] rounded-full">
                   Featured only <button onClick={() => set('isFeatured', '')}><X size={10} /></button>
                 </span>

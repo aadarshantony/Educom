@@ -32,7 +32,7 @@ const HomePage = () => {
   const products = Array.isArray(items) ? items : [];
 
   useEffect(() => {
-    dispatch(fetchProducts({ limit: 4, sort: 'newest', isFeatured: 'true' }));
+    dispatch(fetchProducts({ limit: 4, sort: 'newest' }));
   }, [dispatch]);
 
   return (
@@ -100,8 +100,8 @@ const HomePage = () => {
         <div className="max-w-[1400px] mx-auto px-4 md:px-12">
           <div className="flex items-end justify-between mb-10">
             <motion.div initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-              <p className="eyebrow mb-1">Hand-picked</p>
-              <h2 className="font-display text-3xl md:text-4xl text-cream">Featured Products</h2>
+              <p className="eyebrow mb-1">Just dropped</p>
+              <h2 className="font-display text-3xl md:text-4xl text-cream">New Arrivals</h2>
             </motion.div>
             <button onClick={() => navigate('/shop')} className="hidden sm:flex items-center gap-1.5 text-gold-500 text-[0.72rem] tracking-widest uppercase hover:gap-2.5 transition-all">
               View All <ArrowRight size={14} />
@@ -110,8 +110,8 @@ const HomePage = () => {
 
           {loading ? <ProductGridSkeleton count={8} /> : products.length === 0 ? (
             <div className="text-center py-16">
-              <p className="font-display text-2xl text-muted mb-2">No featured products yet</p>
-              <p className="text-muted/60 text-sm mb-6">Mark products as featured in the admin dashboard</p>
+              <p className="font-display text-2xl text-muted mb-2">No products yet</p>
+              <p className="text-muted/60 text-sm mb-6">Check back soon for new arrivals</p>
               <button onClick={() => navigate('/shop')} className="btn-outline">Browse All Products</button>
             </div>
           ) : (
