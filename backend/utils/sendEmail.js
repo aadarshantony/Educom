@@ -1,72 +1,44 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+
+let _resend = null;
+const getResend = () => {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not set in environment variables');
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+};
 
 const sendEmail = async ({ to, subject, html, text }) => {
   console.log('\n📧 ─── sendEmail called ───────────────────────────────');
   console.log('   To:     ', to);
   console.log('   Subject:', subject);
+  console.log('   API Key:', process.env.RESEND_API_KEY ? '✓ set' : '✗ NOT SET');
 
-  // ── Check env vars before even trying ──────────────────────────────────────
-  const missing = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASS'].filter(
-    (key) => !process.env[key]
-  );
+  const resend = getResend();
 
-  if (missing.length > 0) {
-    console.error('❌ sendEmail FAILED — missing env vars:', missing.join(', '));
-    console.error('   Make sure these are set in your .env file');
-    return;
-  }
+  const from = `${process.env.EMAIL_FROM_NAME || 'NOIR'} <${process.env.EMAIL_FROM_ADDRESS || 'onboarding@resend.dev'}>`;
+  console.log('   From:   ', from);
+  console.log('   Sending via Resend HTTP API…');
 
-  console.log('   Host:   ', process.env.EMAIL_HOST);
-  console.log('   Port:   ', process.env.EMAIL_PORT);
-  console.log('   User:   ', process.env.EMAIL_USER);
-  console.log('   Pass:   ', process.env.EMAIL_PASS ? '✓ set' : '✗ not set');
-
-
-  const transporter = nodemailer.createTransport({
-    host:   process.env.EMAIL_HOST,
-    port:   Number(process.env.EMAIL_PORT) || 587,
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  console.log('   Verifying SMTP connection…');
-  try {
-    await transporter.verify();
-    console.log('   ✅ SMTP connection verified successfully');
-  } catch (verifyErr) {
-    console.error('   ❌ SMTP connection FAILED:', verifyErr.message);
-    console.error('   Common causes:');
-    console.error('      - Wrong EMAIL_HOST or EMAIL_PORT');
-    console.error('      - Wrong EMAIL_USER or EMAIL_PASS');
-    console.error('      - For Gmail: make sure you used an App Password, not your real password');
-    console.error('      - For Gmail: make sure 2-Step Verification is enabled on your account');
-    throw verifyErr;
-  }
-
-  const mailOptions = {
-    from:    `"${process.env.EMAIL_FROM_NAME || 'NOIR'}" <${process.env.EMAIL_USER}>`,
+  const { data, error } = await resend.emails.send({
+    from,
     to,
     subject,
     html,
     text: text || html.replace(/<[^>]+>/g, ''),
-  };
+  });
 
-  console.log('   Sending email…');
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('   ✅ Email sent successfully!');
-    console.log('   Message ID:', info.messageId);
-    console.log('   Response: ', info.response);
-    console.log('─────────────────────────────────────────────────────\n');
-    return info;
-  } catch (sendErr) {
-    console.error('   ❌ Email send FAILED:', sendErr.message);
-    console.error('─────────────────────────────────────────────────────\n');
-    throw sendErr;
+  if (error) {
+    console.error('   ❌ Resend API error:', error);
+    throw new Error(error.message || 'Failed to send email via Resend');
   }
+
+  console.log('   ✅ Email sent! ID:', data.id);
+  console.log('─────────────────────────────────────────────────────\n');
+  return data;
 };
 
 export default sendEmail;
