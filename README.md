@@ -53,6 +53,29 @@ A production-grade e-commerce platform built on the MERN stack with Stripe payme
 
 ---
 
+## 🔐 Demo Access
+
+Explore the full platform — including the admin dashboard — using the credentials below.
+
+### 👤 Admin Account
+
+| Field    | Value                  |
+|----------|------------------------|
+| Email    | `n28el30im@mozmail.com`|
+| Password | `DtGF8-MQst8N:q?`      |
+
+> **Admin dashboard** is available at [`/admin`](https://educomecommerce.vercel.app/admin) — manage products, orders, coupons, and view sales analytics.
+
+### 🛒 Regular User
+
+You can also register a new account at `/register` to test the customer experience — shopping, checkout, order tracking, and wishlist.
+
+---
+
+> ⚠️ This is a demo environment. Feel free to explore, but please don't delete existing products or orders so other testers have a good experience. Use Stripe's test card `4242 4242 4242 4242` for payments.
+
+---
+
 ## Project Structure
 
 ```
