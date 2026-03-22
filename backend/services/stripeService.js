@@ -14,7 +14,7 @@ const getStripe = () => {
 
 export const createCheckoutSession = async (req, res, next) => {
   try {
-    const stripe = getStripe();
+    const stripe  = getStripe();
     const { orderId } = req.body;
 
     const order = await Order.findById(orderId).populate('orderItems.product', 'name images');
@@ -22,6 +22,7 @@ export const createCheckoutSession = async (req, res, next) => {
     if (order.user.toString() !== req.user._id.toString()) return res.status(403).json({ message: 'Not authorized' });
     if (order.isPaid) return res.status(400).json({ message: 'Order is already paid' });
 
+    // Build line items from order items
     const lineItems = order.orderItems.map((item) => ({
       price_data: {
         currency: 'inr',
@@ -31,15 +32,41 @@ export const createCheckoutSession = async (req, res, next) => {
       quantity: item.quantity,
     }));
 
-    if (order.taxPrice > 0) lineItems.push({ price_data: { currency: 'inr', product_data: { name: 'GST (18%)' }, unit_amount: Math.round(order.taxPrice * 100) }, quantity: 1 });
-    if (order.shippingPrice > 0) lineItems.push({ price_data: { currency: 'inr', product_data: { name: 'Shipping' }, unit_amount: Math.round(order.shippingPrice * 100) }, quantity: 1 });
+    // Add tax
+    if (order.taxPrice > 0) {
+      lineItems.push({
+        price_data: { currency: 'inr', product_data: { name: 'GST (18%)' }, unit_amount: Math.round(order.taxPrice * 100) },
+        quantity: 1,
+      });
+    }
+
+    // Add shipping
+    if (order.shippingPrice > 0) {
+      lineItems.push({
+        price_data: { currency: 'inr', product_data: { name: 'Shipping' }, unit_amount: Math.round(order.shippingPrice * 100) },
+        quantity: 1,
+      });
+    }
+    
+    if (order.couponApplied?.discount > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'inr',
+          product_data: {
+            name: `Discount — ${order.couponApplied.code}`,
+          },
+          unit_amount: -Math.round(order.couponApplied.discount * 100), // negative = deduction
+        },
+        quantity: 1,
+      });
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${process.env.FRONT_END_URL}/payment-success?orderId=${order._id}`,
-      cancel_url: `${process.env.FRONT_END_URL}/checkout?cancelled=true`,
+      cancel_url:  `${process.env.FRONT_END_URL}/checkout?cancelled=true`,
       metadata: { orderId: order._id.toString(), userId: req.user._id.toString() },
       customer_email: req.user.email,
     });
