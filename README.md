@@ -296,6 +296,7 @@ The `vercel.json` in the frontend folder handles React Router client-side routin
 6. Deploy
 
 > **Note:** Render's free tier spins down after 15 minutes of inactivity. The first request after sleep takes ~30 seconds to respond.
+Please use this link https://educom-e-commerce-platform.onrender.com/api/health to wake up the server before using the site
 
 ---
 
