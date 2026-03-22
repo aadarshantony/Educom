@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
@@ -24,6 +24,125 @@ const fadeUp = {
     opacity: 1, y: 0,
     transition: { delay: i * 0.1, duration: 0.55, ease: 'easeOut' },
   }),
+};
+
+
+const SLIDES = [
+  {
+    url:   'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=900&auto=format&fit=crop',
+    label: 'Accessories',
+  },
+  {
+    url:   'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=900&auto=format&fit=crop',
+    label: 'Women',
+  },
+  {
+    url:   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&auto=format&fit=crop',
+    label: 'Men',
+  },
+  {
+    url:   'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=900&auto=format&fit=crop',
+    label: 'Footwear',
+  },
+  {
+    url:   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&auto=format&fit=crop',
+    label: 'Electronics',
+  },
+  {
+    url:   'https://images.unsplash.com/photo-1602178506248-74fbe91c4fce?w=900&auto=format&fit=crop',
+    label: 'Home',
+  },
+];
+
+const HERO_IMAGES = [
+  {
+    src:   'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=900&auto=format&fit=crop',
+    label: 'Women\'s Collection',
+  },
+  {
+    src:   'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=900&auto=format&fit=crop',
+    label: 'Footwear',
+  },
+  {
+    src:   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&auto=format&fit=crop',
+    label: 'Accessories',
+  },
+  {
+    src:   'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=900&auto=format&fit=crop',
+    label: 'Electronics',
+  },
+  {
+    src:   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&auto=format&fit=crop',
+    label: 'Men\'s Collection',
+  },
+];
+
+const HeroSlideshow = () => {
+  const [current, setCurrent] = useState(0);
+  const [fading,  setFading]  = useState(false);
+  const timerRef = useRef(null);
+
+  const goTo = (idx) => {
+    setFading(true);
+    setTimeout(() => {
+      setCurrent(idx);
+      setFading(false);
+    }, 400); // fade-out duration
+  };
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => {
+        const next = (prev + 1) % HERO_IMAGES.length;
+        setFading(true);
+        setTimeout(() => setFading(false), 400);
+        return next;
+      });
+    }, 3500);
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  return (
+    <div className="absolute top-0 right-0 w-[82%] h-[88%] rounded-xl overflow-hidden border border-gold-500/20">
+      {/* Images — only current is visible, others are hidden */}
+      {HERO_IMAGES.map((img, i) => (
+        <img
+          key={img.src}
+          src={img.src}
+          alt={img.label}
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500
+                      ${i === current ? (fading ? 'opacity-0' : 'opacity-100') : 'opacity-0'}`}
+        />
+      ))}
+
+      {/* Dark gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-noir-950/70 via-transparent to-transparent" />
+
+      {/* Label */}
+      <div className="absolute bottom-5 left-9 right-5 flex items-center justify-between">
+        <span
+          className={`text-[0.65rem] tracking-[0.18em] uppercase font-medium text-cream/90
+                      transition-opacity duration-300 ${fading ? 'opacity-0' : 'opacity-100'}`}
+        >
+          {HERO_IMAGES[current].label}
+        </span>
+
+        {/* Dot indicators */}
+        <div className="flex gap-1.5">
+          {HERO_IMAGES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              className={`rounded-full transition-all duration-300
+                          ${i === current
+                            ? 'w-5 h-1.5 bg-gold-500'
+                            : 'w-1.5 h-1.5 bg-white/30 hover:bg-white/60'}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const HomePage = () => {
@@ -102,14 +221,8 @@ const HomePage = () => {
               transition={{ duration: 0.8, delay: 0.35 }}
               className="hidden md:block relative h-[520px]"
             >
-              <div className="absolute top-0 right-0 w-[82%] h-[88%] bg-noir-700
-                              border border-gold-500/12 rounded-xl flex items-center
-                              justify-center overflow-hidden">
-                <div className="text-center">
-                  <span className="text-[7rem] leading-none text-gold-500/20">◈</span>
-                  <p className="font-display italic text-xl text-muted mt-3">Premium Collection</p>
-                </div>
-              </div>
+              {/* ── Auto-fading image slideshow ── */}
+              <HeroSlideshow />
               {[
                 { pos: 'top-[8%] left-[-6%]',  label: 'Products',      value: '500+' },
                 { pos: 'bottom-[4%] left-[2%]', label: 'Happy Clients', value: '12k+' },
