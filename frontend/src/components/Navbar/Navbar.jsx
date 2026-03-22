@@ -18,7 +18,7 @@ const Logo = ({ onClick }) => (
       <div className="absolute inset-0 border-[1.5px] border-gold-500 rotate-45 transition-transform group-hover:rotate-[55deg] duration-300" />
       <div className="absolute inset-[4px] bg-gold-500 rotate-45 transition-transform group-hover:rotate-[55deg] duration-300" />
     </div>
-    <span className="font-display text-xl tracking-[0.18em] uppercase text-cream">EduCom</span>
+    <span className="font-display text-xl tracking-[0.18em] uppercase text-cream">Noir</span>
   </button>
 );
 
@@ -83,7 +83,7 @@ const Navbar = () => {
           {/* Desktop nav links */}
           <nav className="hidden md:flex items-center gap-8 flex-1">
             {NAV_LINKS.map((link) => {
-              const active = location.pathname === link.path.split('?')[0];
+              const active = (location.pathname + location.search) === link.path || (link.path === "/shop" && location.pathname === "/shop" && !location.search);
               return (
                 <button key={link.label} onClick={() => navigate(link.path)}
                   className={`text-[0.68rem] font-medium tracking-[0.12em] uppercase transition-colors relative
@@ -166,7 +166,7 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile drawer ──────────────────────────────────────────────── */}
       <AnimatePresence>
         {drawerOpen && (
           <>

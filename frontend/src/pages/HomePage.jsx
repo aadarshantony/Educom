@@ -11,14 +11,14 @@ import SearchBar from '../components/SearchBar/SearchBar';
 const CATEGORIES = ['Men', 'Women', 'Accessories', 'Footwear', 'Electronics', 'Home'];
 
 const VALUE_PROPS = [
-  { icon: '◈', title: 'Premium Quality', desc: 'Every product curated for excellence' },
-  { icon: '◉', title: 'Free Shipping', desc: 'On all orders above ₹500' },
-  { icon: '◎', title: 'Secure Payment', desc: 'Stripe-powered checkout' },
-  { icon: '◍', title: 'Easy Returns', desc: '30-day hassle-free returns' },
+  { icon: '◈', title: 'Premium Quality',  desc: 'Every product curated for excellence' },
+  { icon: '◉', title: 'Free Shipping',     desc: 'On all orders above ₹500' },
+  { icon: '◎', title: 'Secure Payment',    desc: 'Stripe-powered checkout' },
+  { icon: '◍', title: 'Easy Returns',      desc: '30-day hassle-free returns' },
 ];
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden:   { opacity: 0, y: 28 },
   visible: (i = 0) => ({
     opacity: 1, y: 0,
     transition: { delay: i * 0.1, duration: 0.55, ease: 'easeOut' },
@@ -39,12 +39,12 @@ const HomePage = () => {
 
   return (
     <div>
-      {/* Hero*/}
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center overflow-hidden
                           bg-gradient-to-br from-noir-950 via-noir-800 to-noir-950">
         {/* Decorative glows */}
         <div className="pointer-events-none absolute top-1/4 right-[8%] w-96 h-96 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(212,168,83,0.07) 0%, transparent 70%)' }} />
+             style={{ background: 'radial-gradient(circle, rgba(212,168,83,0.07) 0%, transparent 70%)' }} />
         <div className="pointer-events-none absolute bottom-[10%] left-[4%] w-72 h-72
                         border border-gold-500/6 rotate-45" />
         <div className="pointer-events-none absolute left-[3%] top-1/3 w-px h-48 bg-gold-500/15" />
@@ -55,7 +55,7 @@ const HomePage = () => {
             <div>
               <motion.p variants={fadeUp} initial="hidden" animate="visible" custom={0}
                 className="eyebrow flex items-center gap-3 mb-5">
-                <span className="gold-line" /> New Collection 2026
+                <span className="gold-line" /> New Collection 2025
               </motion.p>
 
               <motion.h1 variants={fadeUp} initial="hidden" animate="visible" custom={1}
@@ -108,8 +108,8 @@ const HomePage = () => {
               </div>
 
               {[
-                { pos: 'top-[8%] left-[-6%]', label: 'Products', value: '500+' },
-                { pos: 'bottom-[4%] left-[2%]', label: 'Happy Clients', value: '12k+' },
+                { pos: 'top-[8%] left-[-6%]',   label: 'Products',      value: '500+' },
+                { pos: 'bottom-[4%] left-[2%]',  label: 'Happy Clients', value: '12k+' },
               ].map((card) => (
                 <div key={card.label}
                   className={`absolute ${card.pos} bg-noir-800 border border-gold-500/20 rounded-xl p-4`}>
@@ -122,7 +122,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* ── Categories ─────────────────────────────────────────────────────── */}
       <section className="bg-noir-900 py-16">
         <div className="max-w-[1400px] mx-auto px-4 md:px-12">
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
@@ -147,7 +147,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* New Arrivals */}
+      {/* ── New Arrivals ───────────────────────────────────────────────────── */}
       <section className="py-20">
         <div className="max-w-[1400px] mx-auto px-4 md:px-12">
           <div className="flex items-end justify-between mb-10">
@@ -195,7 +195,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Value props */}
+      {/* ── Value props ────────────────────────────────────────────────────── */}
       <section className="bg-noir-900 border-y border-gold-500/8 py-12">
         <div className="max-w-[1400px] mx-auto px-4 md:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
