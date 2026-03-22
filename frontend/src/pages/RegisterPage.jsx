@@ -14,7 +14,7 @@ const Logo = ({ onClick }) => (
       <div className="absolute inset-0 border-[1.5px] border-gold-500 rotate-45" />
       <div className="absolute inset-[4px] bg-gold-500 rotate-45" />
     </div>
-    <span className="font-display text-xl tracking-[0.18em] uppercase text-cream">Noir</span>
+    <span className="font-display text-xl tracking-[0.18em] uppercase text-cream">EduCom</span>
   </button>
 );
 
@@ -47,7 +47,7 @@ const RegisterPage = () => {
         <div className="text-center">
           <Logo onClick={() => navigate('/')} />
           <h1 className="font-display text-3xl text-cream mb-2">Create account</h1>
-          <p className="text-muted text-sm mb-8">Join the NOIR community</p>
+          <p className="text-muted text-sm mb-8">Join the EduCom community</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

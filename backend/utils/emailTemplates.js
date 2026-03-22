@@ -1,3 +1,4 @@
+// ── Shared layout wrapper ─────────────────────────────────────────────────────
 const layout = (content) => `
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +48,7 @@ const layout = (content) => `
       </div>
       <div class="body">${content}</div>
       <div class="footer">
-        <p>© ${new Date().getFullYear()} EduCom. This email was sent to you because you have an account with us.</p>
+        <p>© ${new Date().getFullYear()} EduCom Commerce. This email was sent to you because you have an account with us.</p>
         <p style="margin-top:6px">If you did not perform this action, please ignore this email.</p>
       </div>
     </div>
@@ -56,12 +57,13 @@ const layout = (content) => `
 </html>
 `;
 
+// ── Format currency ───────────────────────────────────────────────────────────
 const fmt = (n) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(n ?? 0);
+  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(n ?? 0);
 
-// 1. Login notification 
+// ── 1. Login notification ─────────────────────────────────────────────────────
 export const loginEmailTemplate = ({ name, time, device = 'Unknown device' }) =>
-    layout(`
+  layout(`
     <h2 class="title">New Sign-In Detected</h2>
     <p class="subtitle">Hi ${name}, we noticed a new sign-in to your EduCom account.</p>
     <hr class="divider" />
@@ -76,11 +78,11 @@ export const loginEmailTemplate = ({ name, time, device = 'Unknown device' }) =>
     </p>
   `);
 
-//  2. Order placed confirmation 
+// ── 2. Order placed confirmation ──────────────────────────────────────────────
 export const orderPlacedEmailTemplate = ({ name, order }) => {
-    const itemsHtml = order.orderItems
-        .map(
-            (item) => `
+  const itemsHtml = order.orderItems
+    .map(
+      (item) => `
         <div class="item-row">
           <div>
             <div class="item-name">${item.name}</div>
@@ -88,10 +90,10 @@ export const orderPlacedEmailTemplate = ({ name, order }) => {
           </div>
           <div class="item-price">${fmt(item.price * item.quantity)}</div>
         </div>`
-        )
-        .join('');
+    )
+    .join('');
 
-    return layout(`
+  return layout(`
     <h2 class="title">Order Confirmed ✓</h2>
     <p class="subtitle">
       Hi ${name}, thank you for your order! We've received it and are getting it ready.
@@ -138,19 +140,19 @@ export const orderPlacedEmailTemplate = ({ name, order }) => {
   `);
 };
 
-// 3. Order status update 
+// ── 3. Order status update ────────────────────────────────────────────────────
 const STATUS_MSG = {
-    processing: { headline: 'Your order is being processed 📦', body: 'We have confirmed your payment and are preparing your items.' },
-    shipped: { headline: 'Your order is on its way! 🚚', body: 'Your package has been handed over to the courier and is on its way to you.' },
-    delivered: { headline: 'Your order has been delivered ✓', body: 'Your order has been delivered. We hope you love it!' },
-    cancelled: { headline: 'Your order has been cancelled', body: 'Your order has been cancelled. If you paid, a refund will be processed within 5–7 business days.' },
-    pending: { headline: 'Order status update', body: 'Your order status has been updated.' },
+  processing: { headline: 'Your order is being processed 📦',  body: 'We have confirmed your payment and are preparing your items.' },
+  shipped:    { headline: 'Your order is on its way! 🚚',       body: 'Your package has been handed over to the courier and is on its way to you.' },
+  delivered:  { headline: 'Your order has been delivered ✓',   body: 'Your order has been delivered. We hope you love it!' },
+  cancelled:  { headline: 'Your order has been cancelled',      body: 'Your order has been cancelled. If you paid, a refund will be processed within 5–7 business days.' },
+  pending:    { headline: 'Order status update',                body: 'Your order status has been updated.' },
 };
 
 export const orderStatusEmailTemplate = ({ name, order, status }) => {
-    const msg = STATUS_MSG[status] || STATUS_MSG.pending;
+  const msg = STATUS_MSG[status] || STATUS_MSG.pending;
 
-    return layout(`
+  return layout(`
     <h2 class="title">${msg.headline}</h2>
     <p class="subtitle">Hi ${name}, ${msg.body}</p>
     <hr class="divider" />

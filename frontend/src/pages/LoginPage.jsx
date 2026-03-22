@@ -16,7 +16,7 @@ const Logo = ({ onClick }) => (
       <div className="absolute inset-0 border-[1.5px] border-gold-500 rotate-45" />
       <div className="absolute inset-[4px] bg-gold-500 rotate-45" />
     </div>
-    <span className="font-display text-xl tracking-[0.18em] uppercase text-cream">Noir</span>
+    <span className="font-display text-xl tracking-[0.18em] uppercase text-cream">EduCom</span>
   </button>
 );
 

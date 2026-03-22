@@ -52,7 +52,7 @@ export const loginUser = async (req, res, next) => {
 
     sendEmail({
       to: user.email,
-      subject: 'New sign-in to your NOIR account',
+      subject: 'New sign-in to your EduCom account',
       html: loginEmailTemplate({ name: user.name, time, device: ua }),
     }).catch((err) => console.error('Login email failed:', err.message));
 

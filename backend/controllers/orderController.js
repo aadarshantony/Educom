@@ -159,7 +159,7 @@ export const updateOrderStatus = async (req, res, next) => {
     if (order.user?.email) {
       sendEmail({
         to:      order.user.email,
-        subject: `Your NOIR order has been ${status}`,
+        subject: `Your EduCom order has been ${status}`,
         html:    orderStatusEmailTemplate({ name: order.user.name, order: updated, status }),
       }).catch((err) => console.error('Status email failed:', err.message));
     }
