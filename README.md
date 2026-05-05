@@ -3,7 +3,7 @@
 A production-grade e-commerce platform built on the MERN stack with Stripe payments, Cloudinary image uploads, JWT authentication, and transactional email notifications.
 
 **Live Demo →** [educomecommerce.vercel.app](https://educomecommerce.vercel.app)
-**API →** [educom-fhh4.onrender.com](https://educom-e-commerce-platform.onrender.com/api/health)
+**API →** [educom-fhh4.onrender.com](https://educom-fhh4.onrender.com/api/health)
 
 ---
 
