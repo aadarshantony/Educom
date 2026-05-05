@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 
@@ -14,7 +17,6 @@ import uploadRoutes  from './routes/uploadRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
 const app = express();
-
 app.use(cors({
   origin: process.env.FRONT_END_URL,
   credentials: true,
